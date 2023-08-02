@@ -27,6 +27,9 @@ body{
 
 .header{
     text-align: center;
+    display: flex;
+    background: var(--color-medium-grey);
+    justify-content: center;
 }
 
 .header_title{
@@ -37,9 +40,22 @@ body{
 /*controls*/
 
 .controls{
-    background: yellow;
+    display: flex;
+    justify-content: space-between;
+    background: var(--color-medium-grey);
 }
 
+.controls_b{
+    border: 0;
+    border-radius: 10%;
+}
+
+.controls_b1{
+    border: 0;
+    width: 50%;
+    color: var(--color-light-grey);
+    background: var(--color-green);
+}
 /* counter */
 
 .counter{
