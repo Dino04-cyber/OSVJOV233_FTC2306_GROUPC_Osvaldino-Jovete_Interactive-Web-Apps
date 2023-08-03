@@ -1,33 +1,33 @@
-const date = 2050; // Use const instead of let for constant values
-const status = 'student'; // Use const instead of let for constant values
-let count = 0; // Use let to allow updating the count
+const year = 2050; // Renamed 'date' to 'year' for clarity
+const status = 'parent'; // Set the initial status value to 'parent'
+let count = 0;
 
-if (date === 2050) { // Use === for comparison instead of =
-  console.log("January", 'New Year’s Day'); // Add missing closing parenthesis
+if (year === 2050) { // Used === for comparison instead of =
+  console.log("January", 'New Year’s Day');
   console.log("March", 'Human Rights Day');
-  console.log('April', 'Family Day'); // Use 'April' instead of date as the month
-  console.log('April', 'Freedom Day'); // Use 'April' instead of date as the month
-  count += 4; // Increment count by 4
+  console.log('April', 'Family Day');
+  console.log('April', 'Freedom Day');
+  count += 4;
 
-  if (status === "student") { // Use === for comparison instead of =
+  if (status === "student") { // Used === for comparison instead of =
     console.log('June', 'Youth Day');
-    count += 1; // Increment count by 1
+    count += 1;
   }
 
   console.log('August', 'Women’s Day');
   console.log('September', 'Heritage Day');
-  console.log('December', 'Day of Reconciliation'); // Use 'December' instead of date as the month
-  count += 3; // Increment count by 3
+  console.log('December', 'Day of Reconciliation');
+  count += 3;
 
-  if (status === "parent") { // Use === for comparison instead of =
+  if (status === "parent") { // Used === for comparison instead of =
     console.log('December', 'Christmas Day');
-    count += 1; // Increment count by 1
+    count += 1;
   }
 
-  console.log('December', 'Day of Goodwill'); // Use 'December' instead of date as the month
-  count += 1; // Increment count by 1
+  console.log('December', 'Day of Goodwill');
+  count += 1;
 }
 
 console.log('Your status is:', status);
-console.log('The year is:', date);
+console.log('The year is:', year);
 console.log('The total holidays is:', count);
