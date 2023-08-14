@@ -4,7 +4,7 @@ const BANNED_WARNING = 'Unfortunately, we do not ship to your country of residen
 const NONE_SELECTED = 0;
 
 let shipping = null;
-const location_1 = 'RSA'; 
+const location_1 = 'NK'; 
 const customers = 1;
 const currency = null; 
 
