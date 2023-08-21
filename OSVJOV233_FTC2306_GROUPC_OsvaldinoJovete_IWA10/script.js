@@ -32,7 +32,7 @@ const holidays = {
         date: new Date(`24 September ${currentYear}`),
     },
     6: {
-        id: 6,
+        id: 10,
         name: 'Christmas Day',
         date: new Date(`25 December ${currentYear} 13:25`),
     },
@@ -49,7 +49,7 @@ const holidays = {
 }
 
 const christmas = 6;
-const futureId = 9;
+const futureId = 6;
 
 // Do not change code above this comment
 if (futureId <= 8) {
@@ -71,8 +71,7 @@ if (isEarlier) {
 
 console.log('ID change:', holidays[christmas].id !== copied.id || copied.id !== holidays[christmas].id);
 console.log('Name change:', copied.name);
-console.log('Date change:',  (holidays[christmas].date !== copied.date || copied.date).toLocaleDateString
-(/*The 'en-GB' sets the date to the order given*/'en-GB',{ day: '2-digit', month: '2-digit', year: 'numeric' }));
+console.log('Date change:',  (holidays[christmas].date !== copied.date || copied.date).toLocaleDateString('en-GB',{ day: '2-digit', month: '2-digit', year: 'numeric' }));
 
 
 const holidayTimestamps = Object.values(holidays);
