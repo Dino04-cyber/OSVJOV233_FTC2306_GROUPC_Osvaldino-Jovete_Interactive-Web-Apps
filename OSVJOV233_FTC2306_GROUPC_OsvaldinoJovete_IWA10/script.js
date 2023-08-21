@@ -52,10 +52,10 @@ const christmas = 6;
 const futureId = 9;
 
 // Do not change code above this comment
+if (futureId <= 8) {
+    console.log(`ID ${futureId} is created`)
 
-console.log(`ID ${futureId} not created yet`);
-
-let copied = { ...holidays[christmas] }; // Create a copy of the object
+    let copied = { ...holidays[christmas] }; // Create a copy of the object
 copied.name = 'X-mas Day';
 
 // Set the time to midnight
@@ -92,3 +92,10 @@ const randomDay = new Date(randomDate).getDate().toString().padStart(2, '0');
 const randomMonth = (new Date(randomDate).getMonth() + 1).toString().padStart(2, '0');
 
 console.log(`${randomDay}/${randomMonth}/${currentYear}`);
+
+}
+else{
+    console.log(`ID ${futureId} is not created`)
+}
+
+// console.log(`ID ${futureId} not created yet`);
