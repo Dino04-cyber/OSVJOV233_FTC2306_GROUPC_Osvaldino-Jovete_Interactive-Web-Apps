@@ -19,20 +19,25 @@ const extractBiggest = () => {
 	const secondLastValue = secondArray[secondArray.length - 1];
 	const thirdLastValue = thirdArray[thirdArray.length - 1];
 
-	if (firstLastValue >= secondLastValue && firstLastValue >= thirdLastValue) {
-		firstArray.pop();
-		return firstLastValue;
-	}
+	 if (firstLastValue >= secondLastValue && secondLastValue >= thirdLastValue) {
+	 	firstArray.pop();
+	 	return firstLastValue;
+	 } 
 
-	if (secondLastValue >= firstLastValue && secondLastValue >= thirdLastValue) {
-		secondArray.pop();
-		return secondLastValue;
-	}
+	 if (secondLastValue >= thirdLastValue && thirdLastValue >= thirdLastValue) {
+	 	secondArray.pop();
+	 	return secondLastValue;
+	 }
 	
-	if (thirdLastValue >= firstLastValue && thirdLastValue >= secondLastValue) {
-		thirdArray.pop();
-		return thirdLastValue;
-	}
+	 if (thirdLastValue <= secondLastValue && secondLastValue >= firstLastValue) {
+	 	thirdArray.pop();
+	 	return thirdLastValue;
+	} else {
+       return thirdArray.pop()
+    }
+
+	
+
 }
 
 // Only edit above
