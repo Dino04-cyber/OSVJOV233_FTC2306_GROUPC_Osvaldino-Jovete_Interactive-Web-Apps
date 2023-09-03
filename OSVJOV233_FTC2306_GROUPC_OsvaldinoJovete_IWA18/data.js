@@ -102,3 +102,20 @@ export const updateDragging = (newDragging) => {
         over,
     }
 }
+// Create a function to add an order to the state
+export const createOrder = (title, table) => {
+    const order = {
+      id: state.orders.length + 1, // Generate a unique ID
+      title,
+      table,
+      created: new Date(), // Add a timestamp for when the order was created
+      column: 'ordered', // Set the initial column (you can change this as needed)
+    };
+  
+    state.orders.push(order);
+  
+    // Update the view to display the new order
+    displayNewOrder(order);
+  };
+  
+  // ... (other functions)

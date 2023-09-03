@@ -1,87 +1,148 @@
-/**
- * A handler that fires when a user drags over any element inside a column. In
- * order to determine which column the user is dragging over the entire event
- * bubble path is checked with `event.path` (or `event.composedPath()` for
- * browsers that don't support `event.path`). The bubbling path is looped over
- * until an element with a `data-area` attribute is found. Once found both the
- * active dragging column is set in the `state` object in "data.js" and the HTML
- * is updated to reflect the new column.
- *
- * @param {Event} event 
- */
-const handleDragOver = (event) => {
-    event.preventDefault();
-    const path = event.path || event.composedPath()
-    let column = null
+// Import data and view modules
+import * as data from './data.js';
+import * as view from './view.js';
 
-    for (const element of path) {
-        const { area } = element.dataset
-        if (area) {
-            column = area
-            break;
-        }
+// Event listener for the "Add Order" button
+document.querySelector('[data-add]').addEventListener('click', () => {
+  // Open the "Add Order" overlay and focus on the input field
+  view.openAddOrderOverlay();
+  view.focusAddOrderInput();
+});
+
+// Event listener for the "Cancel" button in the "Add Order" overlay
+document.querySelector('[data-add-cancel]').addEventListener('click', () => {
+    // Close the "Add Order" overlay
+    view.closeAddOrderOverlay();
+    // Clear the form inputs
+    view.clearAddOrderForm();
+    // Return focus to the "Add Order" button
+    view.focusAddOrderButton();
+  });
+
+// Event listener for the "Help" button
+document.querySelector('[data-help]').addEventListener('click', () => {
+  // Open the "Help" overlay
+  console.log('MY CODE DOESNT WORK NO MATTER HOW MUCH VIDEOS I WATCH')
+  view.openHelpOverlay();
+});
+
+// Event listener for the "Close" button in the "Help" overlay
+document.querySelector('[data-help-cancel]').addEventListener('click', () => {
+  // Close the "Help" overlay
+  view.closeHelpOverlay();
+  // Return focus to the "Add Order" button
+  view.focusAddOrderButton();
+});
+
+// Event listener for the "Add" button in the "Add Order" overlay
+document.querySelector('[data-add-form]').addEventListener('submit', (event) => {
+  event.preventDefault();
+  // Get the order details from the form
+  const title = document.querySelector('[data-add-title]').value.trim();
+  const table = document.querySelector('[data-add-table]').value;
+
+  if (title) {
+    // Create a new order and add it to the "Ordered" column
+    const newOrder = data.createOrder(title, table, 'ordered');
+    data.addOrder(newOrder);
+    view.renderOrder(newOrder);
+    // Close the "Add Order" overlay
+    view.closeAddOrderOverlay();
+    // Clear the form inputs
+    view.clearAddOrderForm();
+    // Return focus to the "Add Order" button
+    view.focusAddOrderButton();
+  }
+});
+
+// Event listener for opening the "Edit Order" overlay when clicking on an order
+document.querySelector('[data-grid]').addEventListener('click', (event) => {
+  const target = event.target;
+  const orderId = target.closest('.order')?.dataset.id;
+
+  if (orderId) {
+    const order = data.getOrderById(orderId);
+    if (order) {
+      // Populate the "Edit Order" overlay with order details
+      view.populateEditOrderForm(order);
+      // Open the "Edit Order" overlay
+      view.openEditOrderOverlay();
     }
+  }
+});
 
-    if (!column) return
-    updateDragging({ over: column })
-    updateDraggingHtml({ over: column })
-}
+// Event listener for closing the "Edit Order" overlay
+document.querySelector('[data-edit-cancel]').addEventListener('click', () => {
+  // Close the "Edit Order" overlay
+  view.closeEditOrderOverlay();
+  // Return focus to the "Add Order" button
+  view.focusAddOrderButton();
+});
 
+// Event listener for submitting the "Edit Order" form
+document.querySelector('[data-edit-form]').addEventListener('submit', (event) => {
+  event.preventDefault();
+  // Get the updated order details from the form
+  const orderId = document.querySelector('[data-edit-id]').value;
+  const updatedTitle = document.querySelector('[data-edit-title]').value.trim();
+  const updatedTable = document.querySelector('[data-edit-table]').value;
+  const updatedColumn = document.querySelector('[data-edit-column]').value;
 
-const handleDragStart = (event) => {
-    event.stopPropagation();
-    };
-const handleDragEnd = (event) => {
-    updateDragging(null);
-    };
-const handleHelpToggle = (event) => {
-    updateShowHelp(!showingHelp);
-    };
-const handleAddToggle = (event) => {
-    updateAdding(!adding);
-    };
-const handleAddSubmit = (event) => {
-    updateAdding(false);
-    };
-const handleEditToggle = (event) => {
-    updateEditing(!editing);
-    };
-const handleEditSubmit = (event) => {
-    updateEditing(false);
-    };
-const handleDelete = (event) => {
-    updateDeleting(true);
-    };
+  if (orderId && updatedTitle) {
+    // Update the order with the new values
+    data.updateOrder(orderId, updatedTitle, updatedTable, updatedColumn);
+    // Move the order to the selected column if the status is changed
+    if (data.moveOrderToColumn(orderId, updatedColumn)) {
+      // If the order was moved, remove it from the previous column in the view
+      view.removeOrder(orderId);
+    }
+    // Close the "Edit Order" overlay
+    view.closeEditOrderOverlay();
+    // Return focus to the "Add Order" button
+    view.focusAddOrderButton();
+  }
+});
 
-html.add.cancel.addEventListener('click', handleAddToggle
-).addEventListener("click", handleAddToggle, false );  // add toggle
-html.other.add.addEventListener('click', handleAddToggle
-).addEventListener("click", handleAddToggle, false ) ;   // add submit button
-html.add.form.addEventListener('submit', handleAddSubmit
-).addEventListener("submit", handleAddSubmit , false )    // add form submission handler
+// Event listener for deleting an order
+document.querySelector('[data-edit-delete]').addEventListener('click', () => {
+  // Get the order ID from the form
+  const orderId = document.querySelector('[data-edit-id]').value;
 
-html.other.grid.addEventListener('click', handleEditToggle
-).addEventListener("click", handleEditToggle, false )     // edit toggle
-html.edit.cancel.addEventListener('click', handleEditToggle
-).addEventListener("click", handleEditToggle, false )      // cancel editing
-html.edit.form.addEventListener('submit', handleEditSubmit
-).addEventListener("submit", handleEditSubmit, false )       // edit form submission handler
-html.edit.delete.addEventListener('click', handleDelete
-).addEventListener("click", handleDelete, false )            // delete button
+  if (orderId) {
+    // Delete the order from data
+    data.deleteOrder(orderId);
+    // Remove the order from the view
+    view.removeOrder(orderId);
+    // Close the "Edit Order" overlay
+    view.closeEditOrderOverlay();
+    // Return focus to the "Add Order" button
+    view.focusAddOrderButton();
+  }
+});
 
-html.help.cancel.addEventListener('click', handleHelpToggle
-).addEventListener("click", handleHelpToggle, false )        // help close
-html.other.help.addEventListener('click', handleHelpToggle
-).addEventListener("click", handleHelpToggle, false )         // help open
+// Drag and drop functionality
+document.querySelectorAll('[data-column]').forEach((column) => {
+  column.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    // Highlight the drop target
+    view.highlightDropTarget(column);
+  });
 
-for (const htmlColumn of Object.values(html.columns)) {
-    htmlColumn.addEventListener('dragstart', handleDragStart
-    ).addEventListener("dragstart", handleDragStart, false )           // drag start
-    htmlColumn.addEventListener('dragend', handleDragEnd
-    ).addEventListener("dragend", handleDragEnd, false )                 // drag end
-}
+  column.addEventListener('dragleave', () => {
+    // Remove the highlight from the drop target when the dragged element leaves
+    view.removeDropTargetHighlight(column);
+  });
 
-for (const htmlArea of Object.values(html.area)) {
-    htmlArea.addEventListener('dragover', handleDragOver
-    ).addEventListener("dragover", handleDragOver, false )                  // drag over area
-}
+  column.addEventListener('drop', (event) => {
+    // Get the ID of the dragged order
+    const orderId = event.dataTransfer.getData('text/plain');
+    if (orderId) {
+      const targetColumn = column.dataset.column;
+      // Move the order to the target column in data and update the view
+      data.moveOrderToColumn(orderId, targetColumn);
+      view.moveOrderToColumn(orderId, targetColumn);
+      // Remove the highlight from the drop target
+      view.removeDropTargetHighlight(column);
+    }
+  });
+});
