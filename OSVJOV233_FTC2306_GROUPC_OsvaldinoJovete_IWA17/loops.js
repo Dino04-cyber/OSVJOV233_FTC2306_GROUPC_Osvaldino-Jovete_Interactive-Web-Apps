@@ -1,13 +1,7 @@
-// Added a missing loop variable and incrementor in the createArray function.
 
-// Corrected the loop variable and condition in the createData function, 
-// and adjusted the calculation for the day within the loop.
 
-// Adjusted the conditions for isWeekend and isAlternate to accurately 
-// identify weekend days and alternate rows.
 
-// Updated the class string building logic in the createHtml function to
-//  properly apply class names based on conditions.
+
 
 
 const MONTHS = [
@@ -18,6 +12,11 @@ const MONTHS = [
 const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
 // Only edit below 
+
+// Added a missing loop variable in the createArray function.
+
+// Corrected the loop variable and condition in the createData function, 
+// and adjusted the calculation for the day within the loop.
 
 const createArray = (length) => {
     const result = []
@@ -71,14 +70,16 @@ const addCell = (existing, classString, value) => {
 
     return result;
 }
-
+// Updated the class string building logic in the createHtml function to
+//  properly apply class names based on conditions.
 const createHtml = (data) => {
     let result = '';
 
     for (const { week, days } of data) {
         let inner = "";
         inner = addCell(inner, 'table__cell table__cell_sidebar', `Week ${week}`);
-
+// Adjusted the conditions for isWeekend and isAlternate to accurately 
+// identify weekend days and alternate rows.
         for (const { dayOfWeek, value } of days) {
             const isToday = new Date().getDate() === value;
             const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
