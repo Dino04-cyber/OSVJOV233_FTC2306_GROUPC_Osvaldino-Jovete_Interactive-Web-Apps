@@ -1,6 +1,7 @@
 // Import data and view modules
-import * as data from './data.js';
+
 import * as view from './view.js';
+import * as data from './data.js'
 
 // Event listener for the "Add Order" button
 document.querySelector('[data-add]').addEventListener('click', () => {
