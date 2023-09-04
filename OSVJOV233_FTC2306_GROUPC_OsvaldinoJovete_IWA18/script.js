@@ -26,13 +26,3 @@ document.querySelector('[data-help-cancel]').addEventListener('click', () => {
   // Close the "Help" overlay
   view.closeHelpOverlay();
 });
-
-
-// Event listener for closing the "Edit Order" overlay
-document.querySelector('[data-edit-cancel]').addEventListener('click', () => {
-  // Close the "Edit Order" overlay
-  view.closeEditOrderOverlay();
-
-  // Return focus to the "Add Order" button
-  view.focusAddOrderButton();
-});
