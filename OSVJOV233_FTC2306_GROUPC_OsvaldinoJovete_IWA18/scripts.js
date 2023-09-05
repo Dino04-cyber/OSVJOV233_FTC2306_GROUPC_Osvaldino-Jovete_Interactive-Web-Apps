@@ -50,7 +50,7 @@ const handleDragOver = (event) => {
 const handleDragStart = (event) => {
     draggedItem = event.target.closest(".order");
     draggingElement = state.dragging.over;
-    id = draggedItem.dataset.id;
+    id = draggedItem.dataset.id;z
 }
 // drop element in the coloumn
 const handleDragEnd = (event) => {
@@ -78,7 +78,7 @@ const handleAddToggle = (event) => {
     html.add.cancel.addEventListener('click', () => {html.add.overlay.close()})
     html.add.form.reset()
 }
-// add selement
+// adds element
 const handleAddSubmit = (event) => {
     event.preventDefault()
     const order = {
