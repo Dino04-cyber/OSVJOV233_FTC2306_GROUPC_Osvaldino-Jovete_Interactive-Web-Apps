@@ -81,6 +81,7 @@ export const createOrderData = (props) => {
         created: new Date(),
     }
 }
+
 /**
  * A function that updates the state of the app to reflect current order that is
  * being dragged around the screen by a user, and also which column (if any) it
