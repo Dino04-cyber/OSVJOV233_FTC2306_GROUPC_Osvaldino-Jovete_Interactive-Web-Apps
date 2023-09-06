@@ -1,14 +1,7 @@
-// import data.js'
-import { createOrderData } from "./data.js";
-import { updateDragging } from "./data.js";
-import { state } from "./data.js";
+import { createOrderHtml, html, updateDraggingHtml, moveToColumn } from './view.js'
+import { createOrderData, updateDragging } from './data.js'
 
-// import view.js
-import { createOrderHtml } from "./view.js";
-import { html } from "./view.js";
-import { updateDraggingHtml } from "./view.js";
-import { moveToColumn } from "./view.js";
-
+let editedColumn = null;
 /**
  * A handler that fires when a user drags over any element inside a column. In
  * order to determine which column the user is dragging over the entire event
@@ -20,20 +13,11 @@ import { moveToColumn } from "./view.js";
  *
  * @param {Event} event 
  */
-// drag element 
 const handleDragOver = (event) => {
-    /** 
-     * The preventDefault() method of the Event interface tells the user agent that if the event 
-     * does not get explicitly handled, its default action should not be taken as it normally would be.
-     */
     event.preventDefault();
-    /**
-     * The composedPath() method of the Event interface returns the event's path which is an array 
-     * of the objects on which listeners will be invoked.
-     */
     const path = event.path || event.composedPath()
     let column = null
-  
+
     for (const element of path) {
         const { area } = element.dataset
         if (area) {
@@ -41,96 +25,128 @@ const handleDragOver = (event) => {
             break;
         }
     }
-  
+
     if (!column) return
     updateDragging({ over: column })
     updateDraggingHtml({ over: column })
+    editedColumn = column
 }
-//drag element to next coloumn
+
 const handleDragStart = (event) => {
-    draggedItem = event.target.closest(".order");
-    draggingElement = state.dragging.over;
-    id = draggedItem.dataset.id;z
-}
-// drop element in the coloumn
+};
+
 const handleDragEnd = (event) => {
     event.preventDefault();
-    const moveTo = state.dragging.over;
-    moveToColumn(id, moveTo);
-    updateDraggingHtml({over: null});
-}
-// click on the question mark/help button --- infor will display and close event
+    const currentOrderId = event.target.closest('.order').getAttribute('data-id');
+    const targetColumn = editedColumn;
+    const orderedColumn = document.querySelector(`section[data-area="${targetColumn}"]`);
+
+    if (currentOrderId && targetColumn) {
+        moveToColumn(currentOrderId, targetColumn);
+    }
+
+    orderedColumn.style = "";
+};
+
+/**
+ * A handler that takes the dialog element's "open" property and sets it to
+ * true if false and false if true, displaying the dialog overlay or hiding it.
+ * 
+ * @param {Event} event 
+ */
 const handleHelpToggle = (event) => {
-    if (!html.help.overlay.open) {
-        html.help.overlay.showModal()
-    } else {
-        html.help.overlay.close()
-    }
-    html.help.cancel.addEventListener('click', () => {html.help.overlay.close()})
-}
-// add element
+    const isHelpOpen = html.help.overlay;
+    isHelpOpen.open ? isHelpOpen.open = false : isHelpOpen.open = true;
+    html.other.add.focus();
+};
+
+/**
+ * A handler that displays the "data-add-overlay" dialog element, puts the focus
+ * on the "Add order" button and resets the form if cancel is clicked
+ * 
+ * @param {Event} event 
+ */
 const handleAddToggle = (event) => {
-    if (!html.add.overlay.open) {
-        html.add.overlay.showModal()
-    } else {
-      html.add.overlay.close()
-    }
-    html.add.cancel.addEventListener('click', () => {html.add.overlay.close()})
-    html.add.form.reset()
-}
-// adds element
+    const isAddOpen = html.add.overlay;
+    if (isAddOpen.open) {
+        isAddOpen.open = false;
+        html.add.form.reset();
+        html.other.add.focus();
+    } else isAddOpen.open = true;
+};
+
+
+/**
+ * A handler that takes the form submission data, gets it in object form with
+ * the createOrderData() function, and then passes it into the createOrderHtml()
+ * function to get the form inputs in html format.
+ *
+ * @param {Event} event 
+ */
 const handleAddSubmit = (event) => {
-    event.preventDefault()
-    const order = {
-        id : null, 
-        title : document.querySelector('[data-add-title]').value,
-        table : document.querySelector('[data-add-table]').value,
-        column : document.querySelector('[data-column="ordered"]'),
-        created : null,
-    }
-    document.querySelector('[data-column="ordered"]').appendChild(createOrderHtml(createOrderData(order)))
-    html.add.overlay.close()
-    html.add.form.reset()
-}
-// edit element
+    event.preventDefault();
+    const table = html.add.table.value;
+    const title = html.add.title.value;
+    const column = 'ordered';
+    
+    const orderData = createOrderData({ table, title, column });
+    const orderElement = html.columns.ordered;
+
+    orderElement.appendChild(createOrderHtml(orderData));
+    html.add.overlay.open = false;
+    html.add.form.reset();
+};
+
 const handleEditToggle = (event) => {
-    if (!html.edit.overlay.open) {
-        html.edit.overlay.showModal()
-    } else {
-      html.edit.overlay.close()
+    const targetOrder = event.target.closest('.order');
+    const isEditOpen = html.edit.overlay;
+
+    if (isEditOpen.open) {
+        isEditOpen.open = false;
     }
-    html.edit.cancel.addEventListener('click', html.help.overlay.close())
-    if (event.target.dataset.id) {
-      const editOrderTitle = document.querySelector('[data-edit-title]')
-      editOrderTitle.value = event.target.children[0].textContent
-      const editOrderTable = document.querySelector('[data-edit-table]')
-      editOrderTable.selectedIndex = (event.target.children[1].children[0].children[1].textContent - 1)
-      const editOrderId = document.querySelector('[data-edit-id]')
-      editOrderId.setAttribute('data-edit-id', event.target.dataset.id)
-    }
-}
-// update element order
+
+    if (targetOrder) {
+        isEditOpen.open = true;
+        const orderId = targetOrder.getAttribute('data-id');
+        const orderTitle = targetOrder.querySelector('.order__title').textContent;
+        const orderTable = targetOrder.querySelector('.order__value[data-order-table]').textContent;
+        const orderedColumn = targetOrder.parentNode.getAttribute('data-column');
+
+        html.edit.title.value = orderTitle;
+        html.edit.table.value = orderTable;
+        html.edit.id.value = orderId;
+        html.edit.column.value = orderedColumn;
+    };
+};
+
 const handleEditSubmit = (event) => {
-    event.preventDefault()
-    const activeElementId = document.querySelector('[data-edit-id]')
-    const actualId = activeElementId.getAttribute('data-edit-id')
-    const activeElementSelector = document.querySelector('[data-edit-column]')
-    const actualColumn = activeElementSelector.value
-    moveToColumn(actualId,actualColumn)
-    const orderId = document.querySelector(`[data-id="${actualId}"]`)
-    orderId.children[0].textContent = document.querySelector('[data-edit-title]').value
-    orderId.children[1].children[0].children[1].textContent = document.querySelector('[data-edit-table]').value
-    html.edit.overlay.close()
+    event.preventDefault();
+    const currentOrderId = html.edit.id.value
+    const currentTitleElement = document.querySelector(`[data-id="${currentOrderId}"] .order__title`);
+    const currenttableElement = document.querySelector(`[data-id="${currentOrderId}"] .order__value[data-order-table]`);
+
+    const editedTitle = html.edit.title.value;
+    const editedTable = html.edit.table.value
+    const editeColumn = html.edit.column.value;
+
+    currentTitleElement.innerText = editedTitle;
+    currenttableElement.innerText = editedTable;
+
+    moveToColumn(currentOrderId, editeColumn);
+
+    html.edit.overlay.open = false;
 }
-// delete order
+
 const handleDelete = (event) => {
-    const activeElementId = document.querySelector('[data-edit-id]')
-    const actualId = activeElementId.getAttribute('data-edit-id')
-    const orderId = document.querySelector(`[data-id="${actualId}"]`)
-    orderId.remove()
-    html.edit.overlay.close()
+    const currentOrderId = html.edit.id.value;
+    const currentOrderElement = document.querySelector(`[data-id="${currentOrderId}"]`);
+
+    currentOrderElement.remove();
+
+    html.edit.overlay.open = false;
 }
-// event listener allows function to proceed
+
+
 html.add.cancel.addEventListener('click', handleAddToggle)
 html.other.add.addEventListener('click', handleAddToggle)
 html.add.form.addEventListener('submit', handleAddSubmit)
@@ -142,6 +158,7 @@ html.edit.delete.addEventListener('click', handleDelete)
 
 html.help.cancel.addEventListener('click', handleHelpToggle)
 html.other.help.addEventListener('click', handleHelpToggle)
+
 
 for (const htmlColumn of Object.values(html.columns)) {
     htmlColumn.addEventListener('dragstart', handleDragStart)
