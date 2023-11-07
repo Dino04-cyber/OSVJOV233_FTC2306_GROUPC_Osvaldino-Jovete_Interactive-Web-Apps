@@ -17,7 +17,7 @@ Each challenge represents a learning experience and a stepping stone in my journ
 - [Folder Structure](#folder-structure)
 - [Introduction](#introduction)
 - [Intro To Web](#intro-to-web)
-- 
+
 ## Project Overview
 
 This repository contains multiple versions of my resume, each implemented as a separate HTML file (resume1.html through resume8.html). The aim is to showcase different styles and layouts while practicing HTML and CSS for web development.
